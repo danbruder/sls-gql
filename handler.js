@@ -6,24 +6,20 @@ if (!global._babelPolyfill) {
 
 import {graphql} from 'graphql';
 import {makeExecutableSchema} from 'graphql-tools';
+import typeDefs from './lib/schema';
+import resolvers from './lib/resolvers';
+import {addModelsToContext} from './lib/models';
 
 const schema = makeExecutableSchema({
-  typeDefs: [
-    `
-    type Query{
-      hello: String
-    }
-  `,
-  ],
-  resolvers: {
-    Query: {
-      hello: () => 'world',
-    },
-  },
+  typeDefs,
+  resolvers,
 });
 
-const handle = (query, variables) =>
-  graphql(schema, query, null, {}, variables);
+const handle = (query, variables) => {
+  let context = {};
+  context = addModelsToContext(context);
+  return graphql(schema, query, null, context, variables);
+};
 
 const createResponse = (statusCode, body) => ({
   statusCode: statusCode,

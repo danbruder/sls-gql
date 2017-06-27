@@ -1,0 +1,29 @@
+type Driver {
+  id: ID!
+  name: String 
+  createdAt: Float!
+  updatedAt: Float!
+  authorId: ID!
+}
+
+extend type Query {
+  drivers(lastCreatedAt: Float, limit: Int): [Driver!]
+  driver(id: ID!): Driver
+}
+
+input CreateDriverInput {
+  name: String
+  authorId: ID
+}
+
+input UpdateDriverInput {
+  id: ID!
+  name: String
+  authorId: ID
+}
+
+extend type Mutation {
+  createDriver(input: CreateDriverInput!): Driver
+  updateDriver(id: ID!, input: UpdateDriverInput!): Driver
+  removeDriver(id: ID!): Boolean
+}
