@@ -847,9 +847,17 @@ browserify-zlib@^0.1.4:
   dependencies:
     pako "~0.2.0"
 
+bson@~1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/bson/-/bson-1.0.4.tgz#93c10d39eaa5b58415cbc4052f3e53e562b0b72c"
+
 btoa-lite@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/btoa-lite/-/btoa-lite-1.0.0.tgz#337766da15801210fdd956c22e9c6891ab9d0337"
+
+buffer-shims@~1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/buffer-shims/-/buffer-shims-1.0.0.tgz#9978ce317388c649ad8793028c3477ef044a8b51"
 
 buffer@^4.9.0:
   version "4.9.1"
@@ -1106,6 +1114,10 @@ errno@^0.1.3:
   dependencies:
     prr "~0.0.0"
 
+es6-promise@3.2.1:
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/es6-promise/-/es6-promise-3.2.1.tgz#ec56233868032909207170c39448e24449dd1fc4"
+
 es6-promise@^3.2.1:
   version "3.3.1"
   resolved "https://registry.yarnpkg.com/es6-promise/-/es6-promise-3.3.1.tgz#a08cdde84ccdbf34d027a1451bc91d4bcd28a613"
@@ -1175,13 +1187,9 @@ express@^4.14.0:
     utils-merge "1.0.0"
     vary "~1.1.1"
 
-extend@3.0.0:
+extend@3.0.0, extend@~3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/extend/-/extend-3.0.0.tgz#5a474353b9f3353ddd8176dfd37b91c83a46f1d4"
-
-extend@~3.0.0:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/extend/-/extend-3.0.1.tgz#a755ea7bc1adfcc5a31ce7e762dbaadc5e636444"
 
 extglob@^0.3.1:
   version "0.3.2"
@@ -1772,6 +1780,25 @@ minimist@^1.2.0:
   dependencies:
     minimist "0.0.8"
 
+mongo-find-by-ids@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/mongo-find-by-ids/-/mongo-find-by-ids-1.0.0.tgz#c4e7a108e2b9fb98f59eb8be5d3801b2bfb52222"
+
+mongodb-core@2.1.13:
+  version "2.1.13"
+  resolved "https://registry.yarnpkg.com/mongodb-core/-/mongodb-core-2.1.13.tgz#771ef638270ac993ab42984689ab824251b96a88"
+  dependencies:
+    bson "~1.0.4"
+    require_optional "~1.0.0"
+
+mongodb@^2.2.29:
+  version "2.2.29"
+  resolved "https://registry.yarnpkg.com/mongodb/-/mongodb-2.2.29.tgz#36b244126f26766c5ebd6465b8ab5b542d6833c5"
+  dependencies:
+    es6-promise "3.2.1"
+    mongodb-core "2.1.13"
+    readable-stream "2.2.7"
+
 ms@2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.0.0.tgz#5608aeadfc00be6c2901df5f9861788de0d597c8"
@@ -2062,6 +2089,18 @@ readable-stream@1.0.27-1:
     isarray "0.0.1"
     string_decoder "~0.10.x"
 
+readable-stream@2.2.7:
+  version "2.2.7"
+  resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-2.2.7.tgz#07057acbe2467b22042d36f98c5ad507054e95b1"
+  dependencies:
+    buffer-shims "~1.0.0"
+    core-util-is "~1.0.0"
+    inherits "~2.0.1"
+    isarray "~1.0.0"
+    process-nextick-args "~1.0.6"
+    string_decoder "~1.0.0"
+    util-deprecate "~1.0.1"
+
 readable-stream@^2.0.1, readable-stream@^2.0.2, readable-stream@^2.0.5, readable-stream@^2.0.6, readable-stream@^2.1.4, readable-stream@^2.2.6:
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-2.3.1.tgz#84e26965bb9e785535ed256e8d38e92c69f09d10"
@@ -2177,6 +2216,17 @@ request@^2.81.0:
     tunnel-agent "^0.6.0"
     uuid "^3.0.0"
 
+require_optional@~1.0.0:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/require_optional/-/require_optional-1.0.1.tgz#4cf35a4247f64ca3df8c2ef208cc494b1ca8fc2e"
+  dependencies:
+    resolve-from "^2.0.0"
+    semver "^5.1.0"
+
+resolve-from@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/resolve-from/-/resolve-from-2.0.0.tgz#9480ab20e94ffa1d9e80a804c7ea147611966b57"
+
 right-align@^0.1.1:
   version "0.1.3"
   resolved "https://registry.yarnpkg.com/right-align/-/right-align-0.1.3.tgz#61339b722fe6a3515689210d24e14c96148613ef"
@@ -2201,7 +2251,7 @@ safe-buffer@~5.0.1:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/safe-buffer/-/safe-buffer-5.0.1.tgz#d263ca54696cd8a306b5ca6551e92de57918fbe7"
 
-semver@^5.3.0:
+semver@^5.1.0, semver@^5.3.0:
   version "5.3.0"
   resolved "https://registry.yarnpkg.com/semver/-/semver-5.3.0.tgz#9b2ce5d3de02d17c6012ad326aa6b4d0cf54f94f"
 
