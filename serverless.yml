@@ -6,6 +6,8 @@ plugins:
 provider:
   name: aws
   runtime: nodejs4.3
+  environment:
+    FAUNADB_SECRET: fnACXKFYL9ACAUT-LM0hXL7r5G0GK1oWsL4U7UAg
 
 functions:
   hello:
