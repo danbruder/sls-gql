@@ -7,7 +7,7 @@ provider:
   name: aws
   runtime: nodejs4.3
   environment:
-    FAUNADB_SECRET: fnACXKFYL9ACAUT-LM0hXL7r5G0GK1oWsL4U7UAg
+    FAUNADB_SECRET: fnACXuAvuYACDmMAXxDagm5BvecBnP3DwShVXBd0
 
 functions:
   hello:
@@ -17,3 +17,6 @@ functions:
           method: POST
           path: graphql 
           cors: true
+
+  schema:
+    handler: handler.schema

@@ -8,6 +8,7 @@ import {makeExecutableSchema} from 'graphql-tools';
 import typeDefs from './lib/schema';
 import resolvers from './lib/resolvers';
 import {addModelsToContext} from './lib/models';
+import {setupFaunaDBSchema} from './lib/db';
 
 const schema = makeExecutableSchema({
   typeDefs,
@@ -46,3 +47,5 @@ module.exports.hello = (event, context, callback) => {
       ),
     );
 };
+
+module.exports.schema = () => setupFaunaDBSchema();

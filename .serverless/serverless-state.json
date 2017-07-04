@@ -1,8 +1,8 @@
 {
   "service": {
-    "service": "foobar",
+    "service": "base-graphql",
     "serviceObject": {
-      "name": "foobar"
+      "name": "base-graphql"
     },
     "provider": {
       "stage": "dev",
@@ -10,6 +10,9 @@
       "variableSyntax": "\\${([ :a-zA-Z0-9._,\\-\\/\\(\\)]+?)}",
       "name": "aws",
       "runtime": "nodejs4.3",
+      "environment": {
+        "FAUNADB_SECRET": "fnACXuAvuYACDmMAXxDagm5BvecBnP3DwShVXBd0"
+      },
       "versionFunctions": true,
       "compiledCloudFormationTemplate": {
         "AWSTemplateFormatVersion": "2010-09-09",
@@ -21,7 +24,13 @@
           "HelloLogGroup": {
             "Type": "AWS::Logs::LogGroup",
             "Properties": {
-              "LogGroupName": "/aws/lambda/foobar-dev-hello"
+              "LogGroupName": "/aws/lambda/base-graphql-dev-hello"
+            }
+          },
+          "SchemaLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/base-graphql-dev-schema"
             }
           },
           "IamRoleLambdaExecution": {
@@ -50,7 +59,7 @@
                       "-",
                       [
                         "dev",
-                        "foobar",
+                        "base-graphql",
                         "lambda"
                       ]
                     ]
@@ -65,7 +74,10 @@
                         ],
                         "Resource": [
                           {
-                            "Fn::Sub": "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/foobar-dev-hello:*"
+                            "Fn::Sub": "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/base-graphql-dev-hello:*"
+                          },
+                          {
+                            "Fn::Sub": "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/base-graphql-dev-schema:*"
                           }
                         ]
                       },
@@ -76,7 +88,10 @@
                         ],
                         "Resource": [
                           {
-                            "Fn::Sub": "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/foobar-dev-hello:*:*"
+                            "Fn::Sub": "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/base-graphql-dev-hello:*:*"
+                          },
+                          {
+                            "Fn::Sub": "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/base-graphql-dev-schema:*:*"
                           }
                         ]
                       }
@@ -89,7 +104,7 @@
                 "Fn::Join": [
                   "-",
                   [
-                    "foobar",
+                    "base-graphql",
                     "dev",
                     "us-east-1",
                     "lambdaRole"
@@ -105,9 +120,9 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/foobar/dev/1498218113478-2017-06-23T11:41:53.478Z/foobar.zip"
+                "S3Key": "serverless/base-graphql/dev/1499166057706-2017-07-04T11:00:57.706Z/base-graphql.zip"
               },
-              "FunctionName": "foobar-dev-hello",
+              "FunctionName": "base-graphql-dev-hello",
               "Handler": "handler.hello",
               "MemorySize": 1024,
               "Role": {
@@ -117,27 +132,73 @@
                 ]
               },
               "Runtime": "nodejs4.3",
-              "Timeout": 6
+              "Timeout": 6,
+              "Environment": {
+                "Variables": {
+                  "FAUNADB_SECRET": "fnACXuAvuYACDmMAXxDagm5BvecBnP3DwShVXBd0"
+                }
+              }
             },
             "DependsOn": [
               "HelloLogGroup",
               "IamRoleLambdaExecution"
             ]
           },
-          "HelloLambdaVersionC0pYB5BKExG0m4umf5Qgy4dWYywcRlNqRPTaPx4Jk": {
+          "HelloLambdaVersionAr9iwi02jzrNHq2e25NMkir0FTRxxCNIA2sdsJH8UE": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "HelloLambdaFunction"
               },
-              "CodeSha256": "C0pYB5BKExG0m4umf5Qgy4dWYyw+cRlNqRPTaPx4/Jk="
+              "CodeSha256": "Ar9iwi02jzr+NHq2e25NMkir0FTRxxCNIA2sdsJH8UE="
+            }
+          },
+          "SchemaLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/base-graphql/dev/1499166057706-2017-07-04T11:00:57.706Z/base-graphql.zip"
+              },
+              "FunctionName": "base-graphql-dev-schema",
+              "Handler": "handler.schema",
+              "MemorySize": 1024,
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              },
+              "Runtime": "nodejs4.3",
+              "Timeout": 6,
+              "Environment": {
+                "Variables": {
+                  "FAUNADB_SECRET": "fnACXuAvuYACDmMAXxDagm5BvecBnP3DwShVXBd0"
+                }
+              }
+            },
+            "DependsOn": [
+              "SchemaLogGroup",
+              "IamRoleLambdaExecution"
+            ]
+          },
+          "SchemaLambdaVersionAr9iwi02jzrNHq2e25NMkir0FTRxxCNIA2sdsJH8UE": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "SchemaLambdaFunction"
+              },
+              "CodeSha256": "Ar9iwi02jzr+NHq2e25NMkir0FTRxxCNIA2sdsJH8UE="
             }
           },
           "ApiGatewayRestApi": {
             "Type": "AWS::ApiGateway::RestApi",
             "Properties": {
-              "Name": "dev-foobar"
+              "Name": "dev-base-graphql"
             }
           },
           "ApiGatewayResourceGraphql": {
@@ -239,7 +300,7 @@
               "MethodResponses": []
             }
           },
-          "ApiGatewayDeployment1498218113499": {
+          "ApiGatewayDeployment1499166057728": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -294,7 +355,13 @@
           "HelloLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "HelloLambdaVersionC0pYB5BKExG0m4umf5Qgy4dWYywcRlNqRPTaPx4Jk"
+              "Ref": "HelloLambdaVersionAr9iwi02jzrNHq2e25NMkir0FTRxxCNIA2sdsJH8UE"
+            }
+          },
+          "SchemaLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "SchemaLambdaVersionAr9iwi02jzrNHq2e25NMkir0FTRxxCNIA2sdsJH8UE"
             }
           },
           "ServiceEndpoint": {
@@ -366,15 +433,22 @@
             }
           }
         ],
-        "name": "foobar-dev-hello",
+        "name": "base-graphql-dev-hello",
+        "package": {},
+        "vpc": {}
+      },
+      "schema": {
+        "handler": "handler.schema",
+        "events": [],
+        "name": "base-graphql-dev-schema",
         "package": {},
         "vpc": {}
       }
     },
-    "artifact": "/Users/dan/Desktop/babel-wanted/.webpack/.serverless/foobar.zip"
+    "artifact": "/Users/dan/personal/sls-gql/.webpack/.serverless/base-graphql.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/foobar/dev/1498218113478-2017-06-23T11:41:53.478Z",
-    "artifact": "foobar.zip"
+    "artifactDirectoryName": "serverless/base-graphql/dev/1499166057706-2017-07-04T11:00:57.706Z",
+    "artifact": "base-graphql.zip"
   }
 }
