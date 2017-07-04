@@ -33156,7 +33156,7 @@
 	var resolvers = {
 	  Driver: {
 	    id: function id(driver) {
-	      return driver._id;
+	      return driver.id;
 	    }
 	  },
 	  Query: {
@@ -33821,7 +33821,10 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.fuck = undefined;
+
+	var _extends2 = __webpack_require__(126);
+
+	var _extends3 = _interopRequireDefault(_extends2);
 
 	var _regenerator = __webpack_require__(150);
 
@@ -33842,14 +33845,12 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	//import DataLoader from 'dataloader';
+	var uuid = __webpack_require__(95);
 	var faunadb = __webpack_require__(190);
 	var q = faunadb.query;
 	var faunaClient = new faunadb.Client({
 	  secret: process.env.FAUNADB_SECRET
 	});
-	var fuck = exports.fuck = {
-	  foo: 'bar'
-	};
 
 	var Driver = function () {
 	  function Driver() {
@@ -33912,7 +33913,11 @@
 	          while (1) {
 	            switch (_context2.prev = _context2.next) {
 	              case 0:
-	                return _context2.abrupt('return', faunaClient.query(q.Select('data', q.Create(q.Class('drivers'), { data: doc }))));
+	                return _context2.abrupt('return', faunaClient.query(q.Select('data', q.Create(q.Class('drivers'), {
+	                  data: (0, _extends3.default)({}, doc, {
+	                    id: uuid()
+	                  })
+	                }))));
 
 	              case 1:
 	              case 'end':
@@ -38075,7 +38080,7 @@
 	  this.maxFields = opts.maxFields || 1000;
 	  this.maxFieldsSize = opts.maxFieldsSize || 2 * 1024 * 1024;
 	  this.keepExtensions = opts.keepExtensions || false;
-	  this.uploadDir = opts.uploadDir || (os.tmpdir && os.tmpdir()) || os.tmpDir();
+	  this.uploadDir = opts.uploadDir || os.tmpDir();
 	  this.encoding = opts.encoding || 'utf-8';
 	  this.headers = null;
 	  this.type = null;
@@ -38401,11 +38406,10 @@
 	    headerField = headerField.toLowerCase();
 	    part.headers[headerField] = headerValue;
 
-	    // matches either a quoted-string or a token (RFC 2616 section 19.5.1)
-	    var m = headerValue.match(/\bname=("([^"]*)"|([^\(\)<>@,;:\\"\/\[\]\?=\{\}\s\t/]+))/i);
+	    var m = headerValue.match(/\bname="([^"]+)"/i);
 	    if (headerField == 'content-disposition') {
 	      if (m) {
-	        part.name = m[2] || m[3] || '';
+	        part.name = m[1];
 	      }
 
 	      part.filename = self._fileName(headerValue);
@@ -38471,12 +38475,10 @@
 	};
 
 	IncomingForm.prototype._fileName = function(headerValue) {
-	  // matches either a quoted-string or a token (RFC 2616 section 19.5.1)
-	  var m = headerValue.match(/\bfilename=("(.*?)"|([^\(\)<>@,;:\\"\/\[\]\?=\{\}\s\t/]+))($|;\s)/i);
+	  var m = headerValue.match(/\bfilename="(.*?)"($|; )/i);
 	  if (!m) return;
 
-	  var match = m[2] || m[3] || '';
-	  var filename = match.substr(match.lastIndexOf('\\') + 1);
+	  var filename = m[1].substr(m[1].lastIndexOf('\\') + 1);
 	  filename = filename.replace(/%22/g, '"');
 	  filename = filename.replace(/&#([\d]{4});/g, function(m, code) {
 	    return String.fromCharCode(code);
@@ -38561,7 +38563,7 @@
 	IncomingForm.prototype._initJSONencoded = function() {
 	  this.type = 'json';
 
-	  var parser = new JSONParser(this)
+	  var parser = new JSONParser()
 	    , self = this;
 
 	  if (this.bytesExpected) {
@@ -38581,8 +38583,11 @@
 	};
 
 	IncomingForm.prototype._uploadPath = function(filename) {
+	  var name = 'upload_';
 	  var buf = crypto.randomBytes(16);
-	  var name = 'upload_' + buf.toString('hex');
+	  for (var i = 0; i < buf.length; ++i) {
+	    name += ('0' + buf[i].toString(16)).slice(-2);
+	  }
 
 	  if (this.keepExtensions) {
 	    var ext = path.extname(filename);
@@ -38617,7 +38622,7 @@
 	if (false) require = GENTLY.hijack(require);
 
 	var util = __webpack_require__(200),
-	    fs = __webpack_require__(201),
+	    WriteStream = __webpack_require__(201).WriteStream,
 	    EventEmitter = __webpack_require__(207).EventEmitter,
 	    crypto = __webpack_require__(97);
 
@@ -38647,11 +38652,11 @@
 	util.inherits(File, EventEmitter);
 
 	File.prototype.open = function() {
-	  this._writeStream = new fs.WriteStream(this.path);
+	  this._writeStream = new WriteStream(this.path);
 	};
 
 	File.prototype.toJSON = function() {
-	  var json = {
+	  return {
 	    size: this.size,
 	    path: this.path,
 	    name: this.name,
@@ -38661,10 +38666,6 @@
 	    filename: this.filename,
 	    mime: this.mime
 	  };
-	  if (this.hash && this.hash != "") {
-	    json.hash = this.hash;
-	  }
-	  return json;
 	};
 
 	File.prototype.write = function(buffer, cb) {
@@ -39115,8 +39116,7 @@
 
 	var Buffer = __webpack_require__(209).Buffer;
 
-	function JSONParser(parent) {
-	  this.parent = parent;
+	function JSONParser() {
 	  this.data = new Buffer('');
 	  this.bytesWritten = 0;
 	}
@@ -39142,9 +39142,7 @@
 	    for (var field in fields) {
 	      this.onField(field, fields[field]);
 	    }
-	  } catch (e) {
-	    this.parent.emit('error', e);
-	  }
+	  } catch (e) {}
 	  this.data = null;
 
 	  this.onEnd();
