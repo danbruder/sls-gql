@@ -79,6 +79,7 @@
 
 	var handle = function handle(query, variables) {
 	  var context = {};
+	  context.db = _db.db;
 	  context = (0, _models.addModelsToContext)(context);
 	  return (0, _graphql.graphql)(schema, query, null, context, variables);
 	};
@@ -33148,17 +33149,13 @@
 /* 106 */
 /***/ (function(module, exports) {
 
-	'use strict';
+	"use strict";
 
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
 	var resolvers = {
-	  Driver: {
-	    id: function id(driver) {
-	      return driver.id ? driver.id : '1';
-	    }
-	  },
+	  Driver: {},
 	  Query: {
 	    drivers: function drivers(root, _ref, _ref2) {
 	      var lastCreatedAt = _ref.lastCreatedAt,
@@ -33847,14 +33844,9 @@
 
 	var _jsBase = __webpack_require__(190);
 
+	var _faunadb = __webpack_require__(192);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var faunadb = __webpack_require__(192); //import DataLoader from 'dataloader';
-
-	var q = faunadb.query;
-	var faunaClient = new faunadb.Client({
-	  secret: process.env.FAUNADB_SECRET
-	});
 
 	var encode = _jsBase.Base64.encode,
 	    decode = _jsBase.Base64.decode;
@@ -33865,13 +33857,14 @@
 
 	    this.context = {};
 	    this.loader = {};
+	    this.db = {};
 	  }
 
 	  (0, _createClass3.default)(Driver, [{
 	    key: 'addContext',
 	    value: function addContext(context) {
 	      this.context = context;
-	      //this.loader = new DataLoader(ids => findByIds(this.collection, ids));
+	      this.db = context.db;
 	    }
 	  }, {
 	    key: 'findOneById',
@@ -33883,7 +33876,7 @@
 	            switch (_context.prev = _context.next) {
 	              case 0:
 	                _context.next = 2;
-	                return faunaClient.query(q.Get(q.Ref(decode(id))));
+	                return this.db.query(_faunadb.query.Get(_faunadb.query.Ref(decode(id))));
 
 	              case 2:
 	                result = _context.sent;
@@ -33919,10 +33912,10 @@
 	            switch (_context2.prev = _context2.next) {
 	              case 0:
 	                _context2.next = 2;
-	                return faunaClient.query(q.Select('data', q.Map(q.Paginate(q.Match(q.Index('all_drivers'))), function (row) {
+	                return this.db.query(_faunadb.query.Select('data', _faunadb.query.Map(_faunadb.query.Paginate(_faunadb.query.Match(_faunadb.query.Index('all_drivers'))), function (row) {
 	                  return {
-	                    id: q.Select('ref', q.Get(row)),
-	                    data: q.Select('data', q.Get(row))
+	                    id: _faunadb.query.Select('ref', _faunadb.query.Get(row)),
+	                    data: _faunadb.query.Select('data', _faunadb.query.Get(row))
 	                  };
 	                })));
 
@@ -33956,7 +33949,7 @@
 	          while (1) {
 	            switch (_context3.prev = _context3.next) {
 	              case 0:
-	                return _context3.abrupt('return', faunaClient.query(q.Select('data', q.Create(q.Class('drivers'), {
+	                return _context3.abrupt('return', this.db.query(_faunadb.query.Select('data', _faunadb.query.Create(_faunadb.query.Class('drivers'), {
 	                  data: doc
 	                }))));
 
@@ -33984,7 +33977,7 @@
 	            switch (_context4.prev = _context4.next) {
 	              case 0:
 	                _context4.next = 2;
-	                return faunaClient.query(q.Update(q.Ref(decode(id)), { data: doc }));
+	                return this.db.query(_faunadb.query.Update(_faunadb.query.Ref(decode(id)), { data: doc }));
 
 	              case 2:
 	                result = _context4.sent;
@@ -34010,21 +34003,17 @@
 	    key: 'removeById',
 	    value: function () {
 	      var _ref6 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee5(id) {
-	        var result;
 	        return _regenerator2.default.wrap(function _callee5$(_context5) {
 	          while (1) {
 	            switch (_context5.prev = _context5.next) {
 	              case 0:
 	                _context5.next = 2;
-	                return faunaClient.query(q.Delete(q.Ref(decode(id))));
+	                return this.db.query(_faunadb.query.Delete(_faunadb.query.Ref(decode(id))));
 
 	              case 2:
-	                result = _context5.sent;
+	                return _context5.abrupt('return', _context5.sent);
 
-	                console.log(result);
-	                return _context5.abrupt('return', id);
-
-	              case 5:
+	              case 3:
 	              case 'end':
 	                return _context5.stop();
 	            }
@@ -60689,12 +60678,8 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	exports.db = undefined;
 	exports.setupFaunaDBSchema = setupFaunaDBSchema;
-	exports.createPost = createPost;
-	exports.getPosts = getPosts;
-	exports.getAuthor = getAuthor;
-	exports.getAuthors = getAuthors;
-	exports.getComments = getComments;
 
 	var _faunadb = __webpack_require__(192);
 
@@ -60702,7 +60687,7 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var faunaClient = new _faunadb2.default.Client({
+	var db = exports.db = new _faunadb2.default.Client({
 	  secret: process.env.FAUNADB_SECRET
 	});
 
@@ -60722,32 +60707,6 @@
 	  }).catch(function (e) {
 	    return console.log(e);
 	  });
-	}
-
-	function createPost(post) {
-	  return faunaClient.query(_faunadb.query.Select('data', _faunadb.query.Create(_faunadb.query.Class('posts'), { data: post })));
-	}
-
-	function getPosts() {
-	  return faunaClient.query(_faunadb.query.Select('data', _faunadb.query.Map(_faunadb.query.Paginate(_faunadb.query.Match(_faunadb.query.Index('all_posts'))), function (row) {
-	    return _faunadb.query.Select('data', _faunadb.query.Get(row));
-	  })));
-	}
-
-	function getAuthor(id) {
-	  return faunaClient.query(_faunadb.query.Select('data', _faunadb.query.Get(_faunadb.query.Match(_faunadb.query.Index('author_by_id'), id))));
-	}
-
-	function getAuthors() {
-	  return faunaClient.query(_faunadb.query.Select('data', _faunadb.query.Map(_faunadb.query.Paginate(_faunadb.query.Match(_faunadb.query.Index('all_authors'))), function (row) {
-	    return _faunadb.query.Select('data', _faunadb.query.Get(row));
-	  })));
-	}
-
-	function getComments() {
-	  return faunaClient.query(_faunadb.query.Select('data', _faunadb.query.Map(_faunadb.query.Paginate(_faunadb.query.Match(_faunadb.query.Index('all_comments'))), function (row) {
-	    return _faunadb.query.Select('data', _faunadb.query.Get(row));
-	  })));
 	}
 
 /***/ }),

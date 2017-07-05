@@ -9,6 +9,7 @@ import typeDefs from './lib/schema';
 import resolvers from './lib/resolvers';
 import {addModelsToContext} from './lib/models';
 import {setupFaunaDBSchema} from './lib/db';
+import {db} from './lib/db';
 
 const schema = makeExecutableSchema({
   typeDefs,
@@ -17,6 +18,7 @@ const schema = makeExecutableSchema({
 
 const handle = (query, variables) => {
   let context = {};
+  context.db = db;
   context = addModelsToContext(context);
   return graphql(schema, query, null, context, variables);
 };
