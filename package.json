@@ -5,7 +5,8 @@
   "main": "handler.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "sls webpack serve"
+    "start": "sls webpack serve",
+    "generate": "plop --cwd ../../ --plopfile internals/generators/plopfile.js"
   },
   "author": "Nicola Peduzzi <thenikso@gmail.com> (http://nikso.net)",
   "license": "MIT",

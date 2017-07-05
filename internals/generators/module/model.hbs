@@ -1,53 +1,67 @@
-import DataLoader from 'dataloader';
+import {Base64} from 'js-base64';
+import {query as q} from 'faunadb';
+const {encode, decode} = Base64;
 
-const findByIds = (collection, ids) => {};
+class {{properCase name}} {
+  constructor() {
+    this.context = {};
+    this.db = {};
+  }
 
-export default class {{properCase name}} {
-  constructor(context) {
+  addContext(context) {
     this.context = context;
-    // this.collection = context.db.collection('{{lowerCase name}}');
-    this.collection = {
-      find: () => {},
-      insertOne: () => {},
-      update: () => {},
-      remove: () => {},
+    this.db = context.db;
+  }
+
+  async findOneById(id) {
+    let result = await this.db.query(q.Get(q.Ref(decode(id))));
+
+    return {
+      ...result.data,
+      id: encode(result.ref),
     };
-    this.loader = new DataLoader(ids => findByIds(this.collection, ids));
   }
 
-  findOneById(id) {
-    return this.loader.load(id);
-  }
+  async all({lastCreatedAt = 0, limit = 10}) {
+    let result = await this.db.query(
+      q.Select(
+        'data',
+        q.Map(q.Paginate(q.Match(q.Index('all_{{properCase name}}s'))), row => ({
+          id: q.Select('ref', q.Get(row)),
+          data: q.Select('data', q.Get(row)),
+        })),
+      ),
+    );
 
-  all({lastCreatedAt = 0, limit = 10}) {
-    return [];
+    return result.map(r => ({
+      ...r.data,
+      id: encode(r.id),
+    }));
   }
 
   async insert(doc) {
-    const docToInsert = Object.assign({}, doc, {
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
-    });
-    const id = (await this.collection.insertOne(docToInsert)).insertedId;
-    return id;
+    return this.db.query(
+      q.Select(
+        'data',
+        q.Create(q.Class('{{properCase name}}s'), {
+          data: doc,
+        }),
+      ),
+    );
   }
 
   async updateById(id, doc) {
-    const ret = await this.collection.update(
-      {_id: id},
-      {
-        $set: Object.assign({}, doc, {
-          updatedAt: Date.now(),
-        }),
-      },
-    );
-    this.loader.clear(id);
-    return ret;
+    let result = await this.db.query(q.Update(q.Ref(decode(id)), {data: doc}));
+
+    return {
+      ...result.data,
+      id: encode(result.ref),
+    };
   }
 
   async removeById(id) {
-    const ret = this.collection.remove({_id: id});
-    this.loader.clear(id);
-    return ret;
+    return await this.db.query(q.Delete(q.Ref(decode(id))));
   }
 }
+
+export default {{properCase name}};

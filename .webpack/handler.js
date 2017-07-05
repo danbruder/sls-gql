@@ -33155,7 +33155,6 @@
 	  value: true
 	});
 	var resolvers = {
-	  Driver: {},
 	  Query: {
 	    drivers: function drivers(root, _ref, _ref2) {
 	      var lastCreatedAt = _ref.lastCreatedAt,
@@ -33826,10 +33825,6 @@
 
 	var _regenerator2 = _interopRequireDefault(_regenerator);
 
-	var _extends2 = __webpack_require__(126);
-
-	var _extends3 = _interopRequireDefault(_extends2);
-
 	var _asyncToGenerator2 = __webpack_require__(153);
 
 	var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
@@ -33842,6 +33837,10 @@
 
 	var _createClass3 = _interopRequireDefault(_createClass2);
 
+	var _extends2 = __webpack_require__(126);
+
+	var _extends3 = _interopRequireDefault(_extends2);
+
 	var _jsBase = __webpack_require__(190);
 
 	var _faunadb = __webpack_require__(192);
@@ -33851,12 +33850,19 @@
 	var encode = _jsBase.Base64.encode,
 	    decode = _jsBase.Base64.decode;
 
+
+	var formatResult = function formatResult(r) {
+	  return (0, _extends3.default)({}, r.data, {
+	    createdAt: r.ts,
+	    id: encode(r.ref)
+	  });
+	};
+
 	var Driver = function () {
 	  function Driver() {
 	    (0, _classCallCheck3.default)(this, Driver);
 
 	    this.context = {};
-	    this.loader = {};
 	    this.db = {};
 	  }
 
@@ -33880,9 +33886,7 @@
 
 	              case 2:
 	                result = _context.sent;
-	                return _context.abrupt('return', (0, _extends3.default)({}, result.data, {
-	                  id: encode(result.ref)
-	                }));
+	                return _context.abrupt('return', formatResult(result));
 
 	              case 4:
 	              case 'end':
@@ -33906,28 +33910,32 @@
 	            lastCreatedAt = _ref3$lastCreatedAt === undefined ? 0 : _ref3$lastCreatedAt,
 	            _ref3$limit = _ref3.limit,
 	            limit = _ref3$limit === undefined ? 10 : _ref3$limit;
-	        var result;
+	        var options, result;
 	        return _regenerator2.default.wrap(function _callee2$(_context2) {
 	          while (1) {
 	            switch (_context2.prev = _context2.next) {
 	              case 0:
-	                _context2.next = 2;
-	                return this.db.query(_faunadb.query.Select('data', _faunadb.query.Map(_faunadb.query.Paginate(_faunadb.query.Match(_faunadb.query.Index('all_drivers'))), function (row) {
-	                  return {
-	                    id: _faunadb.query.Select('ref', _faunadb.query.Get(row)),
-	                    data: _faunadb.query.Select('data', _faunadb.query.Get(row))
-	                  };
+	                options = {};
+
+
+	                if (lastCreatedAt) options.ts = lastCreatedAt;
+	                options.size = limit;
+
+	                _context2.next = 5;
+	                return this.db.query(_faunadb.query.Select('data', _faunadb.query.Map(_faunadb.query.Paginate(_faunadb.query.Match(_faunadb.query.Index('all_drivers')), options), function (row) {
+	                  return _faunadb.query.Get(row);
 	                })));
 
-	              case 2:
+	              case 5:
 	                result = _context2.sent;
+
+	                console.log(result);
+
 	                return _context2.abrupt('return', result.map(function (r) {
-	                  return (0, _extends3.default)({}, r.data, {
-	                    id: encode(r.id)
-	                  });
+	                  return formatResult(r);
 	                }));
 
-	              case 4:
+	              case 8:
 	              case 'end':
 	                return _context2.stop();
 	            }
@@ -33945,15 +33953,21 @@
 	    key: 'insert',
 	    value: function () {
 	      var _ref4 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee3(doc) {
+	        var result;
 	        return _regenerator2.default.wrap(function _callee3$(_context3) {
 	          while (1) {
 	            switch (_context3.prev = _context3.next) {
 	              case 0:
-	                return _context3.abrupt('return', this.db.query(_faunadb.query.Select('data', _faunadb.query.Create(_faunadb.query.Class('drivers'), {
+	                _context3.next = 2;
+	                return this.db.query(_faunadb.query.Create(_faunadb.query.Class('drivers'), {
 	                  data: doc
-	                }))));
+	                }));
 
-	              case 1:
+	              case 2:
+	                result = _context3.sent;
+	                return _context3.abrupt('return', formatResult(result));
+
+	              case 4:
 	              case 'end':
 	                return _context3.stop();
 	            }
@@ -33981,9 +33995,7 @@
 
 	              case 2:
 	                result = _context4.sent;
-	                return _context4.abrupt('return', (0, _extends3.default)({}, result.data, {
-	                  id: encode(result.ref)
-	                }));
+	                return _context4.abrupt('return', formatResult(result));
 
 	              case 4:
 	              case 'end':
