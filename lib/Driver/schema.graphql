@@ -17,7 +17,6 @@ input CreateDriverInput {
 }
 
 input UpdateDriverInput {
-  id: ID!
   name: String
   authorId: ID
 }

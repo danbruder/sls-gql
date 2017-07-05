@@ -24,6 +24,7 @@
     "faunadb": "^1.1.1",
     "graphql": "^0.10.3",
     "graphql-tools": "^1.0.0",
+    "js-base64": "^2.1.9",
     "json-loader": "^0.5.4",
     "raw-loader": "^0.5.1",
     "serverless-webpack": "^1.0.0-rc.4",
